@@ -1,0 +1,176 @@
+
+
+var svg = d3.select("#svg1");
+    margin = {right: 10, left: 10};
+    width = +svg.attr("width") ;
+    //- margin.left - margin.right,
+   height = +svg.attr("height");
+
+var x = d3.scaleLinear()
+    .domain([0, 24])
+    .range([0,width])
+    .clamp(true);
+
+var slider = svg.append("g")
+    .attr("class", "slider")
+    .attr("transform", "translate(" + margin.left + "," + height /10+ ")");
+
+slider.append("line")
+    .attr("class", "track")
+    .attr("x1", x.range()[0])
+    .attr("x2", x.range()[1])
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-inset")
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-overlay")
+    .call(d3.drag()
+        .on("start.interrupt", function() { slider.interrupt(); })
+        .on("start drag", function() { hue(x.invert(d3.event.x)); })
+        );
+
+slider.insert("g", ".track-overlay")
+    .attr("class", "ticks")
+    .attr("transform", "translate(0," + 24 + ")")
+  .selectAll("text")
+  .data(x.ticks(24))
+  .enter().append("text")
+    .attr("x", x)
+    .attr("text-anchor", "middle")
+    .text(function(d) { return d ; });
+
+var handle = slider.insert("circle", ".track-overlay")
+    .attr("class", "handle")
+    .attr("r", 9);
+
+slider.transition() // Gratuitous intro!
+    .duration(750)
+    .tween("hue", function() {
+
+      var i = d3.interpolate(0, 0);
+      return function(t) { hue(i(t)); };
+
+    });
+    var wait_time;
+//svg.append("circle").attr("id","first").attr("cx","200").attr("cy","50").attr("r","20").attr("fill","red");
+function hue(h) {
+  handle.attr("cx", x(h));
+
+ // svg.style("background-color", d3.hsl(h, 0.8, 0.8));
+  svg.style("background-color", "#5ab4ac");
+  
+  var abs_hr = Math.floor(h);
+ for (i = 0; i < wait_time.length; i++) { 
+   
+   
+    
+
+    hour = wait_time[i].Hour
+   // hour = Math.floor()
+    if (abs_hr == hour)
+    {
+       console.log("i airport = "+wait_time[i].Airport)
+     airport_iata = wait_time[i].Airport;
+   // airport_color = wait_time[i].color1;
+    avg1 = wait_time[i].AVG;
+    avg1 = Math.floor(avg1);
+
+    var circle_color = hr_color["1"];
+    if(avg1 >= 0 && avg1 <5)
+    {
+      circle_color = hr_color["2"];
+    }
+    else if(avg1 >=5 && avg1 <10)
+      circle_color = hr_color["3"];
+    else if(avg1 >=10 && avg1 <15)
+      circle_color = hr_color["4"];
+    else if(avg1 >=15 && avg1 <20)
+      circle_color = hr_color["5"];
+     else if(avg1 >=20)
+         circle_color = hr_color["6"];
+    
+
+    //circle_color = hr_color[abs_hr];
+    //console.log(wait_time[0].Airport)
+   // for(abs_hr)
+    d3.select("#svg").select("#"+airport_iata).attr("fill",circle_color);  
+  //   d3.select("#svg1").select("#first").attr("fill",circle_color);
+     console.log("avg = "+avg1+" for hour "+ abs_hr+" color = "+circle_color);
+     //break;
+   }
+  // hour = -1;
+ /* else{
+      d3.select("#svg").select("#STL").attr("fill", d3.hsl(h*10, 0.8, 0.8)).attr("stroke","red");
+      }*/
+  }
+}
+//EWR, 1, hr_color
+//if h_csv== 1:
+  //airport
+
+
+var hr_color = {"0":"#ffffb2",
+"1":"#fed976",
+"2":"#feb24c",
+"3":"#fd8d3c",
+"4":"#fc4e2a",
+"5":"#e31a1c",
+"6":"#b10026"};
+
+
+//var wait_time = d3.csv("hourly_avg_wait_time_color.csv");
+var filename = "hourly_avg_wait_time_full_";
+var year_number = "2015";
+function year_change_2015()
+{
+  year_number = "2015";
+  console.log("called year = " + year_number);
+  filename = "hourly_avg_wait_time_full_";
+  //filename = filename + year_number + ".csv";
+  //d3.queue().defer(d3.csv, filename).await(ready);
+  
+}
+function year_change_2014()
+{
+    year_number = "2014";
+    console.log("called year = " + year_number);
+    filename = "hourly_avg_wait_time_full_";
+    //filename = filename + year_number + ".csv";
+   // d3.queue().defer(d3.csv, filename).await(ready);
+  
+}
+function year_change_2013()
+{
+    year_number = "2013";
+    console.log("called year = " + year_number);
+    filename = "hourly_avg_wait_time_full_";
+   // filename = filename + year_number + ".csv";
+    // d3.queue().defer(d3.csv, filename).await(ready);
+    readCSVData()
+  
+}
+
+function readCSVData(year_number) {
+
+
+filename = filename + year_number + ".csv";
+d3.queue().defer(d3.csv, filename).await(function (error, data) {
+    wait_time = data;
+    //console.log(wait_time);
+});
+//d3.queue().defer(d3.csv, filename).await(ready);
+//d3.queue().defer(d3.csv, "hourly_avg_wait_time_full_2014.csv").await(ready);
+//d3.queue().defer(d3.csv, "hourly_avg_wait_time_full_2013.csv").await(ready);
+//ready();
+}
+function ready(error,data){
+ 
+
+}
+//console.log(wait_time);
+/*
+d3.csv("JFK_2013.csv", function(loadedRows) {
+  //wait_time = loadedRows;
+  console.log("airport  = "+loadedRows[0]); 
+});
+
+//console.log(wait_time[]);*/
